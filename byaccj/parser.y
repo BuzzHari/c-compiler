@@ -3,11 +3,15 @@
 %}
 
 %token comment
+%token IF
 
 %%
 
 input:  /* empty string */
+     | input IF { System.out.println("IF"); }
      ;
+
+
 
 %%
 
