@@ -977,11 +977,10 @@ public static void main(String args[]) throws IOException{
 
 
     yyparser = new Parser(new FileReader(args[0]));
-    /* yyparser = new Parser(new InputStreamReader(System.in)); */
     yyparser.yyparse();
 }
 
-//#line 913 "Parser.java"
+//#line 912 "Parser.java"
 //###############################################################
 // method: yylexdebug : check lexer state
 //###############################################################

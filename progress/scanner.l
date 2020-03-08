@@ -77,50 +77,6 @@ exp		=[Ee][+-]?{digit}+
 
 "//".*				            {}
 "/*"				            { yybegin(comment); }
-/*  */
-/* "if"				            { insertTokenUnique("IF", yytext()); return Parser.Parser.IF; } */
-/* "else"				            { insertTokenUnique("ELSE", yytext());} */
-/* "while"				            { insertTokenUnique("WHILE", yytext());} */
-/* "for"				            { insertTokenUnique("FOR", yytext());} */
-/* "return"			            { insertTokenUnique("RETURN", yytext());} */
-/* "int"|"float"|"double"|"long"   { datatype = yytext().toUpperCase(); } */
-/* "main"				            { insertTokenUnique("FUNCTION", yytext());} */
-/*  */
-/*  */
-/*  */
-/* "++"				{ insertTokenUnique("INC_OP", yytext());}  */
-/* "--"				{ insertTokenUnique("DEC_OP", yytext());}  */
-/* "!"				    { insertTokenUnique("NOT_OP", yytext());} */
-/* "+"				    { insertTokenUnique("PLUS", yytext());}      */
-/* "-"				    { insertTokenUnique("MINUS", yytext());}      */
-/* "*"				    { insertTokenUnique("STAR", yytext());}      */
-/* "/"				    { insertTokenUnique("SLASH", yytext());}      */
-/* "<"				    { insertTokenUnique("LT", yytext());}      */
-/* "<="				{ insertTokenUnique("LTEQ", yytext());}  */
-/* ">"				    { insertTokenUnique("GT", yytext());}      */
-/* ">="				{ insertTokenUnique("GTEQ", yytext());}  */
-/* "=="				{ insertTokenUnique("EQ", yytext());}  */
-/* "!="				{ insertTokenUnique("NEQ", yytext());}  */
-/* "="				    { insertTokenUnique("ASSIGN", yytext());}      */
-/*  */
-/* ("[")				{ insertTokenUnique("LSQUAR", yytext());} */
-/* ("]")				{ insertTokenUnique("RSQUAR", yytext());} */
-/* ("{")				{ insertTokenUnique("LBRACE", yytext());} */
-/* ("}")				{ insertTokenUnique("RBRACE", yytext());} */
-/* //";"				{ insertTokenUnique("SEMI", yytext());} */
-/* ","				    { insertTokenUnique("COMMA", yytext());} */
-/* "("				    { insertTokenUnique("LPAREN", yytext());} */
-/* ")"				    { insertTokenUnique("RPAREN", yytext());} */
-/*  */
-/*  */
-/*  */
-/* {L}{A}*				{ insertTokenUnique(datatype, yytext()); } */
-/* {D}+				{ insertTokenUnique("C_INT", yytext()); } */
-/* {D}+"."{D}+         { insertTokenUnique("C_DOUBLE", yytext()); } */
-/* {WS}+				{} */
-/* .				    {} */
-/*  */
-
 "#include<"({alpha})*".h>" {}
 
 "#define"({space})""({alpha})""({alpha}|{digit})*""({space})""({digit})+"" 			{ return Parser.DEFINE;}
