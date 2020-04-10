@@ -1,10 +1,10 @@
 target:
-	jflex Scanner.l
-	javac Scanner.java
+	@jflex Scanner.l > /dev/null 2>&1
+	@javac Scanner.java > /dev/null 2>&1
 
 run:
-	java Scanner
+	@java Scanner < test.c
 
 clean:
-	rm *.java
-	rm *.class
+	@rm *.java
+	@rm *.class
