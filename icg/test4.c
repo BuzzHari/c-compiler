@@ -1,16 +1,14 @@
 #include <stdio.h>
 int main()
 {
-	int a=4;
-	int b=5;
+	int a=5;
+	int b=6;
+	int c=8;
+	for(a=9;a!=6;a=a-1)
 	{
-		int d=56;
+		b=b+4;
+		c=c-1;
 	}
-	int sum;
-	sum=a+b;
-	{
-		int d=20;
-	}
-	foo();
-	d=89;		//variable 'd' out of scope
+	b=b/9;
+	return 0;
 }

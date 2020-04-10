@@ -1,18 +1,12 @@
 #include <stdio.h>
-void main()
+int main()
 {
-	int a[0];	//array index error (has to be greater than zero)
-	int b[8.5];	//array index cannot be a float value
-	int c=5;
-	float d;
-        int i;
-        int c=3;	//redeclaration of variable 'c'
-        int sum;
-        sum=0;
-
-	for(i=0;i<12;i++)
+	int a=5;
+	int b=6;
+	while(a<20)
 	{
-		sum=sum+i;
+		b=b+1;
+		a=a+1;
 	}
-	return;
+	return 0;
 }

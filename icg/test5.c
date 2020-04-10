@@ -1,21 +1,11 @@
-#include<stdio.h>
-int foo(int a)
+#include <stdio.h>
+int main()
 {
-	float s;
-	return s;	//return type mismatch
-}
-int sum(int b,int c)
-{
-	int s;
-	s=b+c;
-	return s;
-}
-void main()
-{
-	int p=3;
-	int q=4;
-	float f=4.5;
-	int d;
-	d=sum(p,f);	//parameter type mismatch
-	return;
+	int a=5;
+	int b=6;
+	do
+	{
+		b=b+1;
+	}while(a>7);
+	return 0;
 }

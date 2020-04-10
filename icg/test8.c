@@ -1,8 +1,8 @@
 #include <stdio.h>
 int main()
 {
-	int a=5;
-	int b=6;
-	int d=a+b;
+	int d=3;
+	int a[10];
+	int x=a[d-2];
 	return 0;
 }

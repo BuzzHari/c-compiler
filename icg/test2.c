@@ -1,9 +1,13 @@
 #include <stdio.h>
 int main()
 {
-	int a=4;
-	int b;
-	b=9;		//undeclared variable
-	a=10;
+	int a=5;
+	int b=6;
+	if(a<=7) {
+		b=b-4;
+    }
+	else {
+		b=b+3;
+    }
 	return 0;
 }
