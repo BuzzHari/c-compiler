@@ -52,9 +52,11 @@ struct 	{return Parser.STRUCT;}
 while	return Parser.WHILE;
 return Parser.	return RETURN;
 printf	return Parser.PRINT;
-{alpha}({alpha}|{digit}|{und})* {yylval.str=strdup(yytext); return Parser.ID;} //TODO
+/* {alpha}({alpha}|{digit}|{und})* {yylval.str=strdup(yytext); return Parser.ID;} //TODO */
+{alpha}({alpha}|{digit}|{und})* {yylval.str=yytext(); return Parser.ID;} //TODO
 {digit}+	{yylval.str=strdup(yytext);return Parser.NUM;} //TODO
-{digit}+\.{digit}+ 	{yylval.str=strdup(yytext); return Parser.REAL;} //TODO
+/* {digit}+\.{digit}+ 	{yylval.str=strdup(yytext); return Parser.REAL;} //TODO */
+{digit}+\.{digit}+ 	{yylval.str=yytext(); return Parser.REAL;} //TODO
 "<="		return Parser.LE;
 ">="            return Parser.GE;
 "=="            return Parser.EQ;
@@ -64,5 +66,5 @@ printf	return Parser.PRINT;
 \/\/.* ;
 \/\*(.*\n)*.*\*\/ ;
 \".*\"	return Parser.STRING;
-.	return yytext[0];
+.	return yytext[0]; // WTF?
 %%
