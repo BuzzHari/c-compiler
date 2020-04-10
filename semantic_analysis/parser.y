@@ -24,7 +24,8 @@ start : Function start
 Function : Type ID '('')' CompoundStmt {
         if ($1!=returntype_func(ct))
         {
-            System.out.print("\nError : Type mismatch : Line "+lexer.getLine()+"\n"); errc++;
+            System.out.print("\nError : Type mismatch : Line "+lexer.getLine()+"\n"); 
+            errc++;
         }
 
         if (!($2 != "printf" && $2 != "scanf" && $2 != "getc" && $2 != "gets" && $2 != "getchar" && $2 != "puts" && $2 != "putchar" && $2 != "clearerr" && $2 != "getw" && $2 != "putw" && $2 != "putc" && $2 != "rewind" && $2 != "sprint" && $2 != "sscanf" && $2 != "remove" && $2 != "fflush"))
@@ -143,18 +144,18 @@ assignment1 : ID '=' assignment1
         try {
             int i =  Integer.parseInt($3);
             if(type != INT) {
-                System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()+"\n"); 
+                System.out.print("\nError : Type lMismatch : Line "+lexer.getLine()+"\n"); 
                 errc++;
             }
         } catch (NumberFormatException nfe) {
             float i = Float.parseFloat($3);
             if(type != FLOAT) {
-                System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()+"\n"); 
+                System.out.print("\nError : Type pMismatch : Line "+lexer.getLine()+"\n"); 
                 errc++;
             }
         }
         if (type == ARRAY) {
-            System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()+"\n");
+            System.out.print("\nError : Type xMismatch : Line "+lexer.getLine()+"\n");
             errc++;
         }
         
@@ -184,9 +185,11 @@ assignment1 : ID '=' assignment1
         int rtype;
         rtype=returntypef($3); 
         int ch=0;
-        //System.out.print(rtype);
-		if(rtype != type)
-			{ System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()+"\n"); errc++;}
+        //System.out.println("Rtype: " + rtype + " type: " + type);
+		if(rtype != type) { 
+            System.out.print("\nError : Type aMismatch : Line "+lexer.getLine()+"\n"); 
+            errc++;
+        }
 		if(lookup($1) == 0) {
 		  for(j=0;j<=l;j++) {
              ch = ch+checkp($3,flist[j],j);}
@@ -237,8 +240,8 @@ exp : ID {
 		}
 		else {
 			int sct1=returnscope($1,stack[top-1]);
-			if(b!=returntype($1,sct1)){}
-				{System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()+"\n");errc++;}
+			if(b!=returntype($1,sct1))
+				{System.out.print("\nError : Type tMismatch : Line "+lexer.getLine()+"\n");errc++;}
 		}
 	}
 	| exp '+' exp
@@ -258,18 +261,18 @@ consttype : NUM
 
 Declaration : Type ID '=' consttype ';' {
         try {
-            int i =  Integer.parseInt($2);
-            if(type != INT) {
-                System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()+"\n"); errc++;
+            int i =  Integer.parseInt($4);
+            if($1 != INT) {
+                System.out.print("\nError : Type Mmismatch : Line "+lexer.getLine()+"\n"); errc++;
             }
         } catch (NumberFormatException nfe) {
-            float i = Float.parseFloat($2);
-            if(type != FLOAT) {
-                System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()+"\n"); errc++;
+            float i = Float.parseFloat($4);
+            if($1 != FLOAT) {
+                System.out.print("\nError : Type mMismatch : Line "+lexer.getLine()+"\n"); errc++;
             }
         }
-        if (type == ARRAY) {
-            System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()+"\n");errc++;
+        if ($1 == ARRAY) {
+            System.out.print("\nError : Type Mmmismatch : Line "+lexer.getLine()+"\n");errc++;
         }
 		if(lookup($2) == 0) {
 			int currscope=stack[top-1];
@@ -444,7 +447,7 @@ public void insertscope(String a,int s)
 	int i;
 	for(i=0;i<n;i++)
 	{
-		if(a == st[i].token)
+		if(st[i].token.equals(a))
 		{
 			st[i].scope=s;
 			break;
@@ -457,7 +460,7 @@ public int returnscope(String a,int cs)
 	int max = 0;
 	for(i=0;i<=n;i++)
 	{
-		if(a == st[i].token && cs>=st[i].scope)
+		if(st[i].token.equals(a) && cs>=st[i].scope)
 		{
 			if(st[i].scope>=max)
 				max = st[i].scope;
@@ -470,8 +473,9 @@ public int lookup(String a)
 	int i;
 	for(i=0;i<n;i++)
 	{
-		if( a == st[i].token)
+		if(st[i].token.equals(a)) {
 			return 0;
+        }
 	}
 	return 1;
 }
@@ -480,8 +484,9 @@ int returntype(String a,int sct)
 	int i;
 	for(i=0;i<n;i++)
 	{
-		if((a == st[i].token) && st[i].scope==sct)
+		if(st[i].token.equals(a) && st[i].scope==sct){
 			return st[i].type[0];
+        }
 	}
     return 0;
 }
@@ -491,7 +496,7 @@ int returntype2(String a,int sct)
 	int i;
 	for(i=0;i<n;i++)
 	{
-		if((a == st[i].token) && st[i].scope==sct)
+		if(st[i].token.equals(a) && st[i].scope==sct)
 			{ return st[i].type[1];}
 	}
     return 0;
@@ -502,8 +507,9 @@ int returntypef(String a)
 	int i;
 	for(i=0;i<n;i++)
 	{
-		if(a == st[i].token)
-			{ return st[i].type[1];}
+		if(st[i].token.equals(a) ) {
+            return st[i].type[1];
+        }
 	}
     return 0;
 }
@@ -515,7 +521,7 @@ void check_scope_update(String a, String b,int sc)
 	int max=0;
 	for(i=0;i<=n;i++)
 	{
-		if((a == st[i].token)   && sc>=st[i].scope)
+		if(st[i].token.equals(a) && sc>=st[i].scope)
 		{
 			if(st[i].scope>=max)
 				max=st[i].scope;
@@ -523,7 +529,7 @@ void check_scope_update(String a, String b,int sc)
 	}
 	for(i=0;i<=n;i++)
 	{
-		if((a == st[i].token) && max==st[i].scope)
+		if(st[i].token.equals(a) && max==st[i].scope)
 		{
 			float temp=Float.parseFloat(b);
 			for(k=0;k<st[i].tn;k++)
@@ -541,7 +547,7 @@ void storevalue(String a, String b, int s_c)
 	int i;
 	for(i=0;i<=n;i++)
 	{
-		if((a == st[i].token) && s_c==st[i].scope)
+		if(st[i].token.equals(a) && s_c==st[i].scope)
 		{
 			st[i].fvalue=Float.parseFloat(b);
 		}
@@ -564,7 +570,7 @@ void insert(String name, int type)
 	{
 		for(i=0;i<n;i++)
 		{
-			if(name == st[i].token)
+			if(st[i].token.equals(name))
 			{
 				st[i].tn++;
 				st[i].type[st[i].tn-1]=type;
@@ -593,7 +599,7 @@ void insert_by_scope(String name, int type, int s_c)
  	int i;
 	for(i=0;i<n;i++)
  	{
-  		if((name == st[i].token) && st[i].scope==s_c)
+  		if(st[i].token.equals(name) && st[i].scope==s_c)
   		{
    			st[i].tn++;
    			st[i].type[st[i].tn-1]=type;
@@ -606,7 +612,7 @@ void insertp(String name,int type)
  	int i;
  	for(i=0;i<n;i++)
  	{
-  		if(name == st[i].token)
+  		if(st[i].token.equals(name))
   		{
    			st[i].pn++;
    			st[i].paratype[st[i].pn-1]=type;
@@ -620,7 +626,7 @@ void insert_index(String name, String ind)
  	int i;
  	for(i=0;i<n;i++)
  	{
-  		if((name == st[i].token) && st[i].type[0]==ARRAY)
+  		if( st[i].token.equals(name) && st[i].type[0]==ARRAY)
   		{
             
    			st[i].index = Integer.parseInt(ind); 
@@ -633,7 +639,7 @@ int checkp(String name,int flist,int c)
  	int i,j;
  	for(i=0;i<n;i++)
  	{
-  		if(name == st[i].token)
+  		if(st[i].token.equals(name))
   		{
     			if(st[i].paratype[c]!=flist)
     			return 1;
