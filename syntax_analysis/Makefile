@@ -1,10 +1,10 @@
 target:
-	jflex scanner.l
-	byaccj -J parser.y
-	javac *java
+	@jflex scanner.l > /dev/null 2>&1
+	@byaccj -J parser.y > /dev/null 2>&1
+	@javac *java
 
 run:
-	java Parser inp.c
+	@java Parser < test.c
 
 clean:
-	rm *java* *.class
+	@rm *java* *.class

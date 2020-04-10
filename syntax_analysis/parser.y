@@ -3,7 +3,7 @@
 %}
 
 
-%nonassoc NO_ELSE %nonassoc  ELSE %left '<' '>' '=' GE_OP LE_OP EQ_OP NE_OP 
+%nonassoc NO_ELSE %nonassoc  ELSE %left '<' '>' '=' GE_OP LE_OP EQ_OP NE_OP
 %left  '+'  '-'
 %left  '*'  '/' '%'
 %left  '|'
@@ -15,9 +15,9 @@
 %token XOR_ASSIGN OR_ASSIGN DEFINE
 %token TYPEDEF EXTERN STATIC AUTO REGISTER
 %token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
-%token STRUCT UNION ENUM 
+%token STRUCT UNION ENUM
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
-%start begin 
+%start begin
 
 
 %%
@@ -30,7 +30,7 @@ begin
 	;
 
 primary_expression
-	: IDENTIFIER  
+	: IDENTIFIER
 	| CONSTANT | STRING_LITERAL
 	| '(' expression ')'
 	;
@@ -322,7 +322,7 @@ statement_list
 
 expression_statement
 	: ';'
-	| expression ';' 
+	| expression ';'
 	;
 
 selection_statement
@@ -346,7 +346,7 @@ jump_statement
 external_declaration
 	: function_definition
 	| declaration
-    
+
 	;
 
 function_definition
@@ -376,7 +376,9 @@ private int yylex(){
 }
 
 public void yyerror(String error) {
-    System.err.println("Error: "+ error + " at line " + Yylex.yyline);
+    /* System.err.println("Error: "+ error + " at line " + lexer.yyline); */
+    System.out.print("Syntax Error at: ");
+    lexer.printToken();
 }
 
 public Parser(Reader r){
@@ -384,8 +386,7 @@ public Parser(Reader r){
 }
 
 public static void main(String args[]) throws IOException{
-    System.out.println("C Parser");
-    
+
     Parser yyparser;
     if(args.length == 0)
         System.exit(1);
@@ -393,10 +394,10 @@ public static void main(String args[]) throws IOException{
     yyparser = new Parser(new FileReader(args[0]));
     int par = yyparser.yyparse();
 	if(par == 0)
-        System.out.println("Parsing Complete and OK!");
+        System.out.println("\nParsing Complete and OK!");
     else
-        System.out.println("Parsing Failed!");
-    
+        System.out.println("\nParsing Failed!");
+
     Yylex.display();
 }
 

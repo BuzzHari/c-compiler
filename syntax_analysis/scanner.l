@@ -24,10 +24,10 @@ exp		=[Ee][+-]?{digit}+
 
 
 %{
-	public void printToken(String type){
-		System.out.println(" line: " + yyline + "\ttype: " + type + "\ttoken: " + yytext());
+	public void printToken(){
+		System.out.println(" line: " + yyline + "\ttoken: " + yytext());
 	}
-	
+
     public boolean isPresent(String type, String token){
         for( int i = 0; i < count; i++ ){
             if( symbolTable[i].type.equals(type) && symbolTable[i].token.equals(token) ){
@@ -64,7 +64,7 @@ exp		=[Ee][+-]?{digit}+
     static node[] symbolTable = new node[1024];
     static int count = 0;
     String datatype = "";
-    
+
     public static StringBuffer string = new StringBuffer();
 %}
 
@@ -73,7 +73,7 @@ exp		=[Ee][+-]?{digit}+
 %eofval}
 
 %states COMMENT
-%states STRING 
+%states STRING
 %%
 <YYINITIAL> {
     "#".+                           {}
@@ -95,7 +95,7 @@ exp		=[Ee][+-]?{digit}+
     {digit}*"."{digit}+({exp})?{fl}?	{ return Parser.CONSTANT; }
     {digit}+"."{digit}*({exp})?{fl}?	{  return Parser.CONSTANT; }
 
-    \"              {  string.setLength(0); yybegin(STRING); }  
+    \"              {  string.setLength(0); yybegin(STRING); }
 
     "->"			{  return Parser.PTR_OP; }
     "++"			{  return Parser.INC_OP; }
@@ -179,13 +179,13 @@ exp		=[Ee][+-]?{digit}+
     "?"			{  return('?'); }
     "printf"|"scanf"	{ insertTokenUnique("FUNCTION", yytext()); return Parser.IDENTIFIER; }
     "main" 			{  insertTokenUnique("FUNCTION", yytext()); return Parser.IDENTIFIER; }
-    {alpha}({alpha}|{digit})*    		{  
+    {alpha}({alpha}|{digit})*    		{
                             if( datatype == "" )
                                 return Parser.IDENTIFIER;
-                            else 
+                            else
                             {
                                 insertTokenUnique(datatype, yytext());
-                                return Parser.IDENTIFIER; 
+                                return Parser.IDENTIFIER;
                             }
                         }
     [ \t\v\n\f]		{  }
@@ -198,7 +198,7 @@ exp		=[Ee][+-]?{digit}+
                         insertTokenUnique("STRING", string.toString() );
                         return Parser.STRING_LITERAL;
                     }
-    
+
     [^\n\r\"\\]+    { string.append( yytext());}
     \t              { string.append('\t');}
     \n              { string.append('\n');}
