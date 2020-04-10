@@ -400,7 +400,7 @@ public static int loop = 0;
 public static int errc=0;
 public static int type=0;
 
-class sym{
+class Sym{
     public int sno;
     public int[] type = new int[100];
     public int[] paratype = new int[100];
@@ -410,9 +410,21 @@ class sym{
     public int scope;
     public String token;
     public float fvalue;
+
+
+    public Sym(int sno, int tn, int pn,
+         int index, int scope, String token, float fvalue) {
+            this.sno = sno;
+            this.tn = tn;
+            this.pn = pn;
+            this.index = index;
+            this.scope = scope;
+            this.token = "";
+            this.fvalue = fvalue;
+        }
 }
 
-public static sym[] st = new sym[100];
+public static Sym[] st = new Sym[100];
 public static int n=0;
 //int[] arr = new int[10];
 public static int tnp;
@@ -568,7 +580,7 @@ void insert_dup(String name, int type, int s_c)
 {
 	st[n].token = name;
 	st[n].tn=1;
-        st[n].pn=0;
+    st[n].pn=0;
 	st[n].type[st[n].tn-1]=type;
 	st[n].sno=n+1;
 	st[n].scope=s_c;
@@ -720,6 +732,11 @@ public Parser(Reader r){
     lexer = new Yylex(r, this);
 }
 
+public void init() {
+    for(int i = 0; i < 100; i++)
+        st[i] = new Sym(0,0,0,-1,0,"",(float)0.0);
+}
+
 public static void main(String args[]) throws IOException{
 
     Parser yyparser;
@@ -727,8 +744,10 @@ public static void main(String args[]) throws IOException{
         System.exit(1);
 
     yyparser = new Parser(new FileReader(args[0]));
+    
+    yyparser.init();
     int par = yyparser.yyparse();
-	if(par == 0)
+	if(par == 0 && errc <= 0)
         System.out.println("\nParsing Complete and OK!");
     else
         System.out.println("\nParsing Failed!");
