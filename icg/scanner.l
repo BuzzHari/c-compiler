@@ -35,8 +35,8 @@ und = [_]
 <YYINITIAL> {
     [ \t]   { /*Ignore*/ }
     \n      { /*Ignore*/ }
-    "{"	    {yyparser.push(); return '{';}
-    "}"	    {yyparser.pop(); return '}';}
+    "{"	    {yyparser.scope_start(); return '{';}
+    "}"	    {yyparser.scope_end(); return '}';}
     ";"	    {   return(';'); }
     ","	    {   return(','); }
     ":"	    {   return(':'); }
@@ -82,7 +82,9 @@ und = [_]
     "<="		   {    return Parser.LE; }
     ">="           {    return Parser.GE; }
     "=="           {    return Parser.EQ; }
-    "!="           {    return Parser.NE; }
+    "!="           {    return Parser.NEQ; }
+    "&&"           {    return Parser.AND; }
+    "||"           {    return Parser.OR; }
     "++"           {    return Parser.INC; }
     "--"           {    return Parser.DEC; }
     

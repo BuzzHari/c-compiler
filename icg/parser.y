@@ -6,10 +6,13 @@
 %token<ival> INT FLOAT VOID
 %token<sval> ID NUM REAL
 %token WHILE IF RETURN PREPROC LE STRING PRINT FUNCTION DO ARRAY ELSE STRUCT STRUCT_VAR FOR GE EQ NE INC DEC
-%right '='
+AND OR
 %left LE GE EQ NEQ AND OR '<' '>'
+%right '='
 %right UMINUS
-%type<sval> assignment assignment1 consttype E T F
+%left '+' '-'
+%left '*' '/'
+%type<sval> assignment assignment1 consttype '=' '+' '-' '*' '/' E T F
 %type<ival> Type
 %start start
 
@@ -23,43 +26,39 @@ start : Function start
 
 
 Function : Type ID '('')' CompoundStmt {
-	 if( !$2.equals("main"))
-	 {
-	 	System.out.print("goto F"+lnum1+"\n");
-	 }
-        if ($1!=returntype_func(ct))
-        {
-            System.out.print("\nError : Type mismatch : Line "+lexer.getLine()+"\n");
-            errc++;
-        }
-
-        if (!$2.equals("printf") && !$2.equals("scanf") && !$2.equals("getc") && !$2.equals("gets") && !$2.equals("getchar") && !$2.equals("puts") && !$2.equals("putchar") && !$2.equals("clearerr") && !$2.equals("getw") && !$2.equals("putw") && !$2.equals("putc") && !$2.equals("rewind") && !$2.equals("sprint") && !$2.equals("sscanf") && !$2.equals("remove") && !$2.equals("fflush"))
-            {System.out.print("Error : Redeclaration of "+$2+" : Line "+lexer.getLine()+"\n"); errc++;}
-        else
-        {
-            insert($2,FUNCTION);
-            insert($2,$1);
-	    g_addr+=4;
-        }
-	}
+            if( !$2.equals("main")) {
+                System.out.print("goto F"+lnum1+"\n");
+            }
+            if ($1!=returntype_func(ct)) {
+                System.out.print("\nError : Type mismatch : Line "+lexer.getLine()+"\n");
+                errc++;
+            }
+            if ($2.equals("printf") || $2.equals("scanf") || $2.equals("getc") || $2.equals("gets") || $2.equals("getchar") || $2.equals("puts") || $2.equals("putchar") || $2.equals("clearerr") || $2.equals("getw") || $2.equals("putw") || $2.equals("putc") || $2.equals("rewind") || $2.equals("sprint") || $2.equals("sscanf") || $2.equals("remove") || $2.equals("fflush"))
+                {System.out.print("Error : RRedeclaration of "+$2+" : Line "+lexer.getLine()+"\n"); errc++;}
+            else
+            {
+                insert($2,FUNCTION);
+                insert($2,$1);
+                g_addr+=4;
+            }
+	    }
         | Type ID '(' parameter_list ')' CompoundStmt  {
-        if ($1!=returntype_func(ct))
-        {
-            System.out.print("\nError : Type mismatch : Line "+lexer.getLine()+"\n"); errc++;
-        }
-
-        if (!$2.equals("printf") && !$2.equals("scanf") && !$2.equals("getc") && !$2.equals("gets") && !$2.equals("getchar") && !$2.equals("puts") && !$2.equals("putchar") && !$2.equals("clearerr") && !$2.equals("getw") && !$2.equals("putw") && !$2.equals("putc") && !$2.equals("rewind") && !$2.equals("sprint") && !$2.equals("sscanf") && !$2.equals("remove") && !$2.equals("fflush"))
-            {System.out.print("Error : Redeclaration of "+$2+" : Line "+lexer.getLine()+"\n");errc++;}
-        else
-        {
-            insert($2,FUNCTION);
-            insert($2,$1);
-	    for(j=0;j<=k;j++)
-		    {insertp($2,plist[j]);}
-	    k=-1;
-        }
-	}
-	;
+            if ($1!=returntype_func(ct)) {
+                System.out.print("\nError : Type mismatch : Line "+lexer.getLine()+"\n"); 
+                errc++;
+            }
+                if ($2.equals("printf") || $2.equals("scanf") || $2.equals("getc") || $2.equals("gets") || $2.equals("getchar") || $2.equals("puts") || $2.equals("putchar") || $2.equals("clearerr") || $2.equals("getw") || $2.equals("putw") || $2.equals("putc") || $2.equals("rewind") || $2.equals("sprint") || $2.equals("sscanf") || $2.equals("remove") || $2.equals("fflush"))
+                {System.out.print("Error : rRedeclaration of "+$2+" : Line "+lexer.getLine()+"\n");errc++;}
+                else {
+                    insert($2,FUNCTION);
+                    insert($2,$1);
+                    for(j=0;j<=k;j++) {
+                      insertp($2,plist[j]);
+                    }
+                    k=-1;
+                }
+	    }
+	    ;
 
 parameter_list : parameter_list ',' parameter
                | parameter
@@ -69,21 +68,20 @@ parameter : Type ID {plist[++k]=$1;insert($2,$1);insertscope($2,i);}
           ;
 
 Type : INT
-	| FLOAT
-	| VOID
-	;
+	 | FLOAT
+	 | VOID
+	 ;
 
 CompoundStmt : '{' StmtList '}'
-	;
+	         ;
 
 StmtList : StmtList stmt
-	| CompoundStmt
-	|
-	;
+	     |
+	     ;
 
 stmt : Declaration
 	 | if
-     |ID '(' ')' ';'
+     | ID '(' ')' ';'
      | for
 	 | while
 	 | dowhile
@@ -103,7 +101,8 @@ stmt : Declaration
           int type=returntype($2,sct);
           if (type == FLOAT)
             storereturn(ct,FLOAT);
-          else storereturn(ct,INT);
+          else 
+            storereturn(ct,INT);
           ct++;
      }
 	 | ';'
@@ -113,29 +112,29 @@ stmt : Declaration
 
 
 dowhile : DO {dowhile1();} CompoundStmt WHILE '(' E ')' {dowhile2();} ';'
-	;
+	    ;
 
 for	: FOR '(' E {for1();} ';' E {for2();}';' E {for3();} ')' CompoundStmt {for4();}
 	;
 
-if : 	 IF '(' E ')' {if1();} CompoundStmt {if2();} else
-	;
+if  : IF '(' E ')' {if1();} CompoundStmt {if2();} else
+    ;
 
 else : ELSE CompoundStmt {if3();}
-	|
-	;
+	 |
+	 ;
 
 while : WHILE {while1();}'(' E ')' {while2();} CompoundStmt {while3();}
-	;
+	  ;
 
 
-assignment : ID '=' consttype
-	| ID '+' assignment
-	| ID ',' assignment
-	| consttype ',' assignment
-	| ID
-	| consttype
-	;
+assignment  : ID '=' consttype
+	        | ID '+' assignment
+	        | ID ',' assignment
+	        | consttype ',' assignment
+	        | ID
+	        | consttype
+	        ;
 
 
 assignment1 : ID {push($1);} '=' {st1[++top] = "=";} E {codegen_assign();}
@@ -144,25 +143,15 @@ assignment1 : ID {push($1);} '=' {st1[++top] = "=";} E {codegen_assign();}
 		int type=returntype($1,sct);
         try {
             int i =  Integer.parseInt($5);
-            if(type != INT) {
+        } catch (NumberFormatException nfe) {
+            if(type != INT && fl == 0) {
                 System.out.print("\nError : Type lMismatch : Line "+lexer.getLine()+"\n");
                 errc++;
             }
-        } catch (NumberFormatException nfe) {
-            float i = Float.parseFloat($5);
-            if(type != FLOAT) {
-                System.out.print("\nError : Type pMismatch : Line "+lexer.getLine()+"\n");
-                errc++;
-            }
         }
-        if (type == ARRAY) {
-            System.out.print("\nError : Type xMismatch : Line "+lexer.getLine()+"\n");
-            errc++;
-        }
-
         if(lookup($1) == 0)
 		{
-			int currscope=stack[top-1];
+			int currscope=stack[index1-1];
 			int scope=returnscope($1,currscope);
 			if((scope<=currscope && end[scope]==0) && !(scope==0))
 				check_scope_update($1,$5,currscope);
@@ -171,132 +160,15 @@ assignment1 : ID {push($1);} '=' {st1[++top] = "=";} E {codegen_assign();}
 
 	| ID ',' assignment1 {
 		if(lookup($1) != 0)
-			System.out.print("\nUndeclared Variable "+$1+" : Line "+lexer.getLine()+"\n"); errc++;
+			System.out.print("\nUUndeclared Variable "+$1+" : Line "+lexer.getLine()+"\n"); errc++;
 	}
-	/* | assignment2 */
 	| consttype ',' assignment1
 	| ID {
 		if(lookup($1) != 0)
-			{ System.out.print("\nUndeclared Variable "+$1+" : Line "+lexer.getLine()+"\n"); errc++; }
+			{ System.out.print("\nnUndeclared Variable "+$1+" : Line "+lexer.getLine()+"\n"); errc++; }
 	}
-	/* | ID '=' ID '(' paralist ')' { */
-        /* int sct=returnscope($1,stack[top-1]); */
-	/* 	int type=returntype($1,sct); */
-        /* //System.out.print($3); */
-        /* int rtype; */
-        /* rtype=returntypef($3); */
-        /* int ch=0; */
-        /* //System.out.println("Rtype: " + rtype + " type: " + type); */
-	/* 	if(rtype != type) { */
-            /* System.out.print("\nError : Type aMismatch : Line "+lexer.getLine()+"\n"); */
-            /* errc++; */
-        /* } */
-	/* 	if(lookup($1) == 0) { */
-	/* 	  for(j=0;j<=l;j++) { */
-             /* ch = ch+checkp($3,flist[j],j);} */
-             /* if(ch>0) { */
-             /* System.out.print("\nError : Parameter Type Mistake or Function undeclared : Line "+lexer.getLine()+"\n"); errc++; */
-             /* } */
-          /* l=-1; */
-	/* 	} */
-	/* } */
-	/* | ID '(' paralist ')' {//function call without assignment */
-        /* int sct=returnscope($1,stack[top-1]); */
-	/* 	int type=returntype($1,sct); int ch=0; */
-	/* 	if(lookup($1) == 0) { */
-	/* 	  for(j=0;j<=l;j++) */
-                  /* {ch = ch+checkp($1,flist[j],j);} */
-                  /* if(ch>0) { System.out.print("\nError : Parameter Type Mistake or Required Function undeclared : Line "+lexer.getLine()+"\n"); errc++;} */
-                  /* l=-1; */
-	/* 	} */
-                /* else {System.out.print("\nUndeclared Function "+$1+" : Line "+lexer.getLine()+"\n");errc++;} */
-	/* } */
 	| consttype
 	;
-
-function_call: ID '=' E '(' paralist ')'			//function call
-			{
-							int sct=returnscope($1,stack[top-1]);
-							int type=returntype($1,sct);
-							//printf("%s",$3);
-							int rtype;
-							rtype=returntypef($3); int ch=0;
-							//printf("%d",rtype);
-							if(rtype!=type)
-							{System.out.print("\nError : Type Mismatch : Line "+lexer.getLine()); errc++;}
-							/* { printf("\nError : Type Mismatch : Line %d\n",printline()); errc++;} */
-								if(lookup($1)!=0)
-								{
-									for(j=0;j<=l;j++)
-									{ch = ch+checkp($3,flist[j],j);}
-									if(ch>0)
-									{System.out.print("\nError : Parameter Type Mistake or Function undeclared Line "+lexer.getLine()); errc++;}
-									/* { printf("\nError : Parameter Type Mistake or Function undeclared : Line %d\n",printline()); errc++;} */
-									l=-1;
-								}
-			}
-			| ID '(' paralist ')'			//function call without assignment
-			{
-							int sct=returnscope($1,stack[top-1]);
-							int type=returntype($1,sct); int ch=0;
-							if(lookup($1)!=0)
-							{
-								for(j=0;j<=l;j++)
-								{ch = ch+checkp($1,flist[j],j);}
-								if(ch>0)
-								{System.out.print("\nError : Parameter Type Mistake or Function undeclared Line "+lexer.getLine()); errc++;}
-								/* { printf("\nError : Parameter Type Mistake or Required Function undeclared : Line %d\n",printline()); errc++;} */
-								l=-1;
-							}
-							else
-							{System.out.print("\nUndeclared Function "+$1+" : Line "+lexer.getLine()+"\n");errc++;}
-							/* {printf("\nUndeclared Function %s : Line %d\n",$1,printline());errc++;} */
-			}
-			;
-
-
-
-paralist : paralist ',' param
-         | param
-         ;
-
-param : ID {
-            if(lookup($1) != 0) {
-                System.out.print("\nUndeclared Variable "+$1+" : Line "+lexer.getLine()+"\n");errc++;
-            }
-            else {
-                int sct=returnscope($1,stack[top-1]);
-                flist[++l]=returntype($1,sct);
-            }
-	  }
-	  ;
-
-/* assignment2 : ID '=' exp {c=0;} */
-/* 		    | ID '=' '(' exp ')' */
-/* 		    ; */
-
-/* exp : ID { */
-/* 		if(c==0) {//check compatibility of mathematical operations */
-/* 			c=1; */
-/* 			int sct=returnscope($1,stack[top-1]); */
-/* 			b=returntype($1,sct); */
-/* 		} */
-/* 		else { */
-/* 			int sct1=returnscope($1,stack[top-1]); */
-/* 			if(b!=returntype($1,sct1)) */
-/* 				{System.out.print("\nError : Type tMismatch : Line "+lexer.getLine()+"\n");errc++;} */
-/* 		} */
-/* 	} */
-/* 	| exp '+' exp */
-/* 	| exp '-' exp */
-/* 	| exp '*' exp */
-/* 	| exp '/' exp */
-/* 	| '(' exp '+' exp ')' */
-/* 	| '(' exp '-' exp ')' */
-/* 	| '(' exp '*' exp ')' */
-/* 	| '(' exp '/' exp ')' */
-/* 	| consttype */
-/* 	; */
 
 consttype : NUM
        	  | REAL
@@ -305,17 +177,12 @@ consttype : NUM
 Declaration : Type ID {push($2);} '=' {st1[++top] = "="; } E {codegen_assign();} ';' {
         try {
             int i =  Integer.parseInt($6);
-            if($1 != INT) {
-                System.out.print("\nError : Type Mmismatch : Line "+lexer.getLine()+"\n"); errc++;
-            }
         } catch (NumberFormatException nfe) {
-            float i = Float.parseFloat($6);
-            if($1 != FLOAT) {
-                System.out.print("\nError : Type mMismatch : Line "+lexer.getLine()+"\n"); errc++;
+            if($1 == INT && fl == 0) {
+                System.out.print("\nError : Type Mmmismatch : Line "+lexer.getLine()+"\n");
+                errc++;
+                fl=1;
             }
-        }
-        if ($1 == ARRAY) {
-            System.out.print("\nError : Type Mmmismatch : Line "+lexer.getLine()+"\n");errc++;
         }
 		if(lookup($2) == 0) {
 			int currscope=stack[index1-1];
@@ -344,33 +211,12 @@ Declaration : Type ID {push($2);} '=' {st1[++top] = "="; } E {codegen_assign();}
 		{
 			int currscope=stack[index1-1];
 			int scope=returnscope($1,currscope);
-			/* int type=returntype($1,scope); */
 			if(!(scope<=currscope && end[scope]==0) || scope==0)
 				{System.out.print("\nError : Variable "+$1+" out of scope : Line "+lexer.getLine()+"\n");errc++;}
 		}
 		else
-			{System.out.print("\nError : Undeclared Variable "+$1+" : Line "+lexer.getLine()+"\n");errc++;}
+			{System.out.print("\nError : uUndeclared Variable "+$1+" : Line "+lexer.getLine()+"\n");errc++;}
 	}
-    /* | Type ID ';' { */
-    /*     if(lookup($2) == 0) { */
-    /*         int currscope=stack[top-1]; */
-    /*         int previous_scope=returnscope($2,currscope); */
-    /*         if(currscope==previous_scope) */
-    /*             {System.out.print("\nError : Redeclaration of "+$2+" : Line "+lexer.getLine()+"\n");errc++;} */
-    /*         else */
-    /*         { */
-    /*             insert_dup($2,$1,currscope); */
-    /*             //check_scope_update($2,$4,stack[top-1]); */
-    /*         } */
-		/* } */
-		/* else { */
-			/* int scope=stack[top-1]; */
-			/* //System.out.print(type); */
-			/* insert($2,$1); */
-			/* insertscope($2,scope); */
-			/* //check_scope_update($2,$4,stack[top-1]); */
-		/* } */
-	/* } */
 	| Type ID '[' assignment ']' ';' {
             int itype;
             try {
@@ -394,7 +240,6 @@ Declaration : Type ID {push($2);} '=' {st1[++top] = "="; } E {codegen_assign();}
                 System.out.print("\nError : Array index must be of type int  : Line "+lexer.getLine()+"\n");
                 errc++;
             }
-
 
             if(lookup($2) == 0) {
                 int currscope=stack[top-1];
@@ -427,14 +272,14 @@ Declaration : Type ID {push($2);} '=' {st1[++top] = "="; } E {codegen_assign();}
     }
 	| STRUCT ID ID ';' {
         insert($3,STRUCT_VAR);
-	g_addr+=4;
+	    g_addr+=4;
     }
 	| error
 	;
 
 
 array : ID {push($1);}'[' E ']'
-	;
+	  ;
 
 E : E '+'{st1[++top] = "+";} T{codegen();}
    | E '-'{st1[++top] = "-";} T{codegen();}
@@ -466,30 +311,28 @@ F : '(' E ')' {$$=$2;}
 
 
 private Yylex lexer;
-public static int i=1,k=-1,l=-1;
-public static int j=0;
-public static String curfunc;
+
+
+public static int g_addr = 100;
+public static int i=1, k=-1, j=0;
 public static int[] stack = new int[100];
-public static int top=0;
-public static int fl;
-public static int[] plist = new int[100];
-public static int[] flist = new int[100];
+public static int index1 = 1;
 public static int[] end = new int[100];
 public static int[] arr = new int[10];
 public static int ct=0,c=0,b;
-public static int loop = 0;
-public static int errc=0;
-public static int type=0;
-public static int g_addr = 100;
-public static int lnum1 = 0;
-public static int index1 = 1;
-public static int f1;
+public static int fl;
+public static int top=0;
 public static int[] label = new int[20];
 public static int label_num = 0;
 public static int ltop = 0;
-public static String[] st1 = new String[10];
+public static String[] st1 = new String[100];
 public static char[] temp_count = new char[2];
+public static int[] plist = new int[100];
+public static int[] flist = new int[100];
+public static int errc=0;
+public static int lnum1 = 0;
 public static String temp = "t";
+
 
 void scope_start()
 {
@@ -498,6 +341,7 @@ void scope_start()
 	index1++;
 	return;
 }
+
 void scope_end()
 {
 	index1--;
@@ -505,176 +349,153 @@ void scope_end()
 	stack[index1]=0;
 	return;
 }
+
 void if1()
 {
 	label_num++;
-	/* strcpy(temp,"t"); */
 	temp = "t";
-	/* strcat(temp,temp_count); */
-	temp = temp + temp_count;
-	/* printf("\n%s = not %s\n",temp,st1[top]); */
+	temp = temp + temp_count[0];
 	System.out.print("\n"+temp+" = not "+st1[top]+"\n");
- 	/* printf("if %s goto L%d\n",temp,label_num); */
 	System.out.print("if "+temp+" goto L"+label_num+"\n");
 	temp_count[0]++;
 	label[++ltop]=label_num;
 
 }
+
 void if2()
 {
 	label_num++;
-	/* printf("\ngoto L%d\n",label_num); */
 	System.out.print("\ngoto L"+label_num+"\n");
-	/* printf("L%d: \n",label[ltop--]); */
 	System.out.print("L"+label[ltop--]);
 	label[++ltop]=label_num;
 }
+
 void if3()
 {
-	/* printf("\nL%d:\n",label[ltop--]); */
 	System.out.print("\nL"+label[ltop--]);
 }
+
 void while1()
 {
 	label_num++;
 	label[++ltop]=label_num;
-	/* printf("\nL%d:\n",label_num); */
 	System.out.println("\nL"+label_num);
 }
+
+
 void while2()
 {
 	label_num++;
-	/* strcpy(temp,"t"); */
 	temp = "t";
-	/* strcat(temp,temp_count); */
-	temp = temp + temp_count;
-	/* printf("\n%s = not %s\n",temp,st1[top--]); */
+	temp = temp + temp_count[0];
 	System.out.print("\n"+temp+" = not "+st1[top--]+"\n");
- 	/* printf("if %s goto L%d\n",temp,label_num); */
 	System.out.print("if "+temp+" goto L"+label_num+"\n");
 	temp_count[0]++;
 	label[++ltop]=label_num;
 }
+
+
 void while3()
 {
 	int y=label[ltop--];
-	/* printf("\ngoto L%d\n",label[ltop--]); */
-	System.out.print("\ngoto L"+label[ltop--]);
-	/* printf("L%d:\n",y); */
+	System.out.println("\ngoto L"+label[ltop--]);
 	System.out.print("L"+y+":\n");
 }
+
 void dowhile1()
 {
 	label_num++;
 	label[++ltop]=label_num;
-	/* printf("\nL%d:\n",label_num); */
 	System.out.print("\nL"+label_num+"\n");
 }
+
 void dowhile2()
 {
- 	/* printf("\nif %s goto L%d\n",st1[top--],label[ltop--]); */
 	System.out.print("\nif "+st1[ltop--]+" goto L"+label[ltop--]+"\n");
 }
+
 void for1()
 {
 	label_num++;
 	label[++ltop]=label_num;
-	/* printf("\nL%d:\n",label_num); */
 	System.out.print("\nL"+label_num+":\n");
 }
+
 void for2()
 {
 	label_num++;
-	/* strcpy(temp,"t"); */
 	temp = "t";
-	/* strcat(temp,temp_count); */
-	temp = temp + temp_count;
-	/* printf("\n%s = not %s\n",temp,st1[top--]); */
+	temp = temp + temp_count[0];
 	System.out.print("\n"+temp+" = not "+st1[top--]+"\n");
- 	/* printf("if %s goto L%d\n",temp,label_num); */
 	System.out.print("if "+temp+" goto L"+label_num+"\n");
 	temp_count[0]++;
 	label[++ltop]=label_num;
 	label_num++;
-	/* printf("goto L%d\n",label_num); */
 	System.out.print("goto L"+label_num+"\n");
 	label[++ltop]=label_num;
 	label_num++;
-	/* printf("L%d:\n",label_num); */
 	System.out.print("L"+label_num+"\n");
 	label[++ltop]=label_num;
 }
+
+
 void for3()
 {
-	/* printf("\ngoto L%d\n",label[ltop-3]); */
 	System.out.print("\ngoto L"+label[ltop-3]+"\n");
-	/* printf("L%d:\n",label[ltop-1]); */
 	System.out.print("L"+label[ltop-1]+"\n");
 }
+
 void for4()
 {
-	/* printf("\ngoto L%d\n",label[ltop]); */
 	System.out.print("\ngoto L"+label[ltop]+"\n");
-	/* printf("L%d:\n",label[ltop-2]); */
 	System.out.print("L"+label[ltop-2]+"\n");
 	ltop-=4;
 }
+
+
 void push(String a)
 {
-	/* strcpy(st1[++top],a); */
 	st1[++top] = a;
 }
+
 void array1()
 {
-	/* strcpy(temp,"t"); */
 	temp = "t";
-	/* strcat(temp,temp_count); */
-	temp = temp + temp_count;
-	/* printf("\n%s = %s\n",temp,st1[top]); */
-	System.out.print("\n"+temp+" = not "+st1[top]+"\n");
-	/* strcpy(st1[top],temp); */
+	temp = temp + temp_count[0];
+	System.out.print("\n"+temp+" = "+st1[top]+"\n");
 	st1[top] = temp;
 	temp_count[0]++;
-	/* strcpy(temp,"t"); */
 	temp = "t";
-	/* strcat(temp,temp_count); */
-	temp = temp + temp_count;
-	/* printf("%s = %s [ %s ] \n",temp,st1[top-1],st1[top]); */
+	temp = temp + temp_count[0];
 	System.out.print(temp+" = "+st1[top-1]+" [ "+st1[top]+" ] \n");
 	top--;
-	/* strcpy(st1[top],temp); */
 	st1[top] = temp;
 	temp_count[0]++;
 }
+
+
 void codegen()
 {
-	/* strcpy(temp,"t"); */
 	temp = "t";
-	/* strcat(temp,temp_count); */
-	temp = temp + temp_count;
-	/* printf("\n%s = %s %s %s\n",temp,st1[top-2],st1[top-1],st1[top]); */
+	temp = temp + temp_count[0];
 	System.out.println("\n"+temp+" = "+st1[top-2]+" "+st1[top-1]+" "+st1[top]);
 	top-=2;
-	/* strcpy(st1[top],temp); */
 	st1[top] = temp;
 	temp_count[0]++;
 }
+
 void codegen_umin()
 {
-	/* strcpy(temp,"t"); */
 	temp = "t";
-	/* strcat(temp,temp_count); */
-	temp = temp + temp_count;
-	/* printf("\n%s = -%s\n",temp,st1[top]); */
+	temp = temp + temp_count[0];
 	System.out.print("\n"+temp+" = -"+st1[top]+"\n");
 	top--;
-	/* strcpy(st1[top],temp); */
 	st1[top] = temp;
 	temp_count[0]++;
 }
+
 void codegen_assign()
 {
-	/* printf("\n%s = %s\n",st1[top-2],st1[top]); */
 	System.out.print("\n"+st1[top-2]+" = "+st1[top]+"\n");
 	top-=2;
 }
@@ -705,7 +526,6 @@ class Sym{
 
 public static Sym[] st = new Sym[100];
 public static int n=0;
-//int[] arr = new int[10];
 public static int tnp;
 
 
@@ -807,7 +627,12 @@ void check_scope_update(String a, String b,int sc)
 	{
 		if(st[i].token.equals(a) && max==st[i].scope)
 		{
-			float temp=Float.parseFloat(b);
+            float temp;
+            try {
+			    temp=Float.parseFloat(b);
+            } catch (NumberFormatException nve){
+                temp=0; 
+            }
 			for(k=0;k<st[i].tn;k++)
 			{
 				if(st[i].type[k]==INT)
@@ -1005,9 +830,7 @@ private int yylex(){
 }
 
 public void yyerror(String error) {
-    /* System.err.println("Error: "+ error + " at line " + lexer.yyline); */
-    System.out.print("Error at: ");
-    lexer.getLine();
+    System.err.println("Error: "+ error + " at line " + lexer.getLine()); 
 }
 
 public Parser(Reader r){
@@ -1017,6 +840,8 @@ public Parser(Reader r){
 public void init() {
     for(int i = 0; i < 100; i++)
         st[i] = new Sym(0,0,0,-1,0,"",(float)0.0);
+    temp_count[0] = '0';
+    temp_count[0] = '0';
 }
 
 public static void main(String args[]) throws IOException{
