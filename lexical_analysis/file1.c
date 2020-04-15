@@ -2,8 +2,8 @@
 void main()
 {
 	int a = 8;
-	float b = 9.5.7;
-	//constant error
+	float b = 9;
+    int c = a+b*46;
 }
 
 

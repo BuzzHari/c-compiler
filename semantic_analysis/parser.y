@@ -491,16 +491,6 @@ int returntype(String a,int sct)
     return 0;
 }
 
-int returntype2(String a,int sct)
-{
-	int i;
-	for(i=0;i<n;i++)
-	{
-		if(st[i].token.equals(a) && st[i].scope==sct)
-			{ return st[i].type[1];}
-	}
-    return 0;
-}
 
 int returntypef(String a)
 {
@@ -730,8 +720,8 @@ private int yylex(){
 
 public void yyerror(String error) {
     /* System.err.println("Error: "+ error + " at line " + lexer.yyline); */
-    System.out.print("Error at: ");
-    lexer.getLine();
+    System.out.print("Error: " + error + " at: " + lexer.getLine());
+    errc+=1;
 }
 
 public Parser(Reader r){

@@ -831,6 +831,7 @@ private int yylex(){
 
 public void yyerror(String error) {
     System.err.println("Error: "+ error + " at line " + lexer.getLine()); 
+    errc+=1;
 }
 
 public Parser(Reader r){
@@ -858,7 +859,7 @@ public static void main(String args[]) throws IOException{
         System.out.println("\nParsing Complete and OK!");
     else
         System.out.println("\nParsing Failed!");
-    display();
+   //display();
    //Yylex.display();
 }
 
