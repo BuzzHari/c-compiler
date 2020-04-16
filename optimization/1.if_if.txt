@@ -1,0 +1,27 @@
+t0 = 1 + 1
+
+a = t0
+
+t1 = a > 1
+
+t2 = not t1
+if t2 goto L1
+
+a = 10
+
+goto L2
+L1
+t3 = 2 + 1
+
+b = t3
+
+t4 = b < 4
+
+t5 = not t4
+if t5 goto L3
+
+b = 2
+
+goto L4
+L3
+c = b
