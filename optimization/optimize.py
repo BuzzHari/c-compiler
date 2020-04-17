@@ -38,10 +38,10 @@ def match(line):
             return 4
         elif re.match("if .* goto .*", line) :
             loop_end = line.split()[-1]
-            print("ending:",loop_end);
+            # print("ending:",loop_end);
             loop = 1
     elif re.match("[a-z]+.* =",line):
-        print("in loop:", line)
+        # print("in loop:", line)
         var = line.split()[0]
         table[var] = "na";
     elif re.match(loop_end, line):
@@ -175,8 +175,38 @@ def main():
 
     # print(table)
 
+    table2 = dict()
+    temp = []
+
+    for line in opt1:
+        if re.match("[a-z]+ = [a-z]+$",line):
+            tokens = line.split()
+            table2[tokens[0]] = tokens[2]
+        else:
+            temp.append(line)
+    # print(temp)
+
+    opt2 = []
+    for line in opt1:
+        new_line = ""
+        tokens = line.split()
+        i = 2
+        if len(tokens) > 2:
+            new_line = tokens[0] + " " + tokens [1] + " "
+        else:
+            new_line = tokens[0] + " "
+        while i < len(tokens):
+            if tokens[i] in table2.keys():
+                new_line += table2[tokens[i]]
+            else:
+                new_line += tokens[i]
+            new_line += " "
+            i += 1
+        new_line = new_line[:-1]
+        opt2.append(new_line)
+
     print("After Optimizing")
-    printLines(opt1)
+    printLines(opt2)
 
 if __name__ == "__main__":
     try:

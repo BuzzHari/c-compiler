@@ -25,3 +25,4 @@ b = 2
 goto L4
 L3
 c = b
+d = c
