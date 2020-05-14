@@ -117,9 +117,9 @@ def main(argc, argv):
 
         #     table.append(quad(str(i), tokens[0], tokens[1], "", ""))
     f.close()
-    print("#", "OP", "ARG1", "ARG2", "DEST", sep="\t")
-    for i in table:
-        i.disp()
+    # print("#", "OP", "ARG1", "ARG2", "DEST", sep="\t")
+    # for i in table:
+    #     i.disp()
     cond = ""
     for i in table:
         print()
