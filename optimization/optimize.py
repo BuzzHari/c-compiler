@@ -193,6 +193,8 @@ def main():
         i = 2
         if len(tokens) > 2:
             new_line = tokens[0] + " " + tokens [1] + " "
+        elif len(tokens) == 2:
+            new_line = tokens[0] + " " + tokens [1] + " "
         else:
             new_line = tokens[0] + " "
         while i < len(tokens):
