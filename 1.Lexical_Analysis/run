@@ -1,0 +1,7 @@
+#!/bin/sh
+
+[ -f ./Scanner.class ] || make > /dev/null
+
+cat $1
+read
+java Scanner < $1

@@ -1,0 +1,5 @@
+#!/bin/bash
+cat $1 2>/dev/null || { echo "\"$1\" not found"; exit; }
+
+echo -en "\n\nPress Enter to continue"; read
+python optimize.py $1 | tee ../6.Assembly_Generation/$1.icg

@@ -1,0 +1,7 @@
+#!/bin/sh
+
+[ -f ./Parser.class ] || make > /dev/null
+
+cat $1
+read
+java Parser $1

@@ -1,0 +1,14 @@
+a = 5
+b = 6
+c = 11
+t1 = a <= 7
+t2 = not t1
+if t2 goto L1
+t3 = b - 4
+b = t3
+goto L2
+L1
+t4 = b + 3
+b = t4
+L2
+d = 11

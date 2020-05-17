@@ -1,0 +1,8 @@
+#!/bin/sh
+
+
+cat $1 2>/dev/null || {  echo "\"$1\" not found"; exit; }
+
+echo -n "Press Enter to continue"; read
+printf "\nOUTPUT:\n"
+python assembly.py $1

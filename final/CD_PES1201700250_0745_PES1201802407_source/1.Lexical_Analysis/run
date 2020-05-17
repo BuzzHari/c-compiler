@@ -1,0 +1,7 @@
+#!/bin/bash
+
+[ -f ./Scanner.class ] || make > /dev/null
+
+cat $1
+echo -n "Press Enter to Continue" && read
+java Scanner < $1
