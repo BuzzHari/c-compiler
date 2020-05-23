@@ -33,6 +33,7 @@ primary_expression
 	: IDENTIFIER
 	| CONSTANT | STRING_LITERAL
 	| '(' expression ')'
+    | error
 	;
 
 Define
