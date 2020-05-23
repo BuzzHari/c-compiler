@@ -167,7 +167,7 @@ assignment1 : ID '=' assignment1
 				check_scope_update($1,$3,currscope);
 		}
 	}
-
+    | ID '[' assignment1 ']' '=' assignment1
 	| ID ',' assignment1 {
 		if(lookup($1) != 0)
 			System.out.print("\nUndeclared Variable "+$1+" : Line "+lexer.getLine()+"\n"); errc++;
