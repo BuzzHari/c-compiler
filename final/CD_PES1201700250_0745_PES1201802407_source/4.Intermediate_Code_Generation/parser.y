@@ -97,7 +97,7 @@ stmt : Declaration
 	 }
 	 | RETURN ';' {storereturn(ct,VOID); ct++;}
      | RETURN ID ';' {
-          int sct=returnscope($2,stack[top-1]);	//stack[top-1] - current scope
+          int sct=returnscope($2,stack[index1-1]);	//stack[index1-1] - current scope
           int type=returntype($2,sct);
           if (type == FLOAT)
             storereturn(ct,FLOAT);
@@ -157,6 +157,10 @@ assignment1 : ID {push($1);} '=' {st1[++top] = "=";} E {codegen_assign();}
 				check_scope_update($1,$5,currscope);
 		}
 	}
+    | ID '[' assignment1 ']' '=' assignment1 
+    {
+        System.out.println("Place holder for arrays.");
+    }
 
 	| ID ',' assignment1 {
 		if(lookup($1) != 0)
@@ -242,7 +246,7 @@ Declaration : Type ID {push($2);} '=' {st1[++top] = "="; } E {codegen_assign();}
             }
 
             if(lookup($2) == 0) {
-                int currscope=stack[top-1];
+                int currscope=stack[index1-1];
                 int previous_scope=returnscope($2,currscope);
                 if(currscope==previous_scope) {
                     System.out.print("\nError : Redeclaration of "+$2+" : Line "+lexer.getLine()+"\n");errc++;
@@ -256,7 +260,7 @@ Declaration : Type ID {push($2);} '=' {st1[++top] = "="; } E {codegen_assign();}
                 }
             }
             else {
-                int scope=stack[top-1];
+                int scope=stack[index1-1];
                 insert($2,ARRAY);
                 insert($2,$1);
                 insertscope($2,scope);
@@ -313,22 +317,22 @@ F : '(' E ')' {$$=$2;}
 private Yylex lexer;
 
 
-public static int g_addr = 100;
+public static int g_addr = 1000;
 public static int i=1, k=-1, j=0;
-public static int[] stack = new int[100];
+public static int[] stack = new int[1000];
 public static int index1 = 1;
-public static int[] end = new int[100];
-public static int[] arr = new int[10];
+public static int[] end = new int[1000];
+public static int[] arr = new int[100];
 public static int ct=0,c=0,b;
 public static int fl;
 public static int top=0;
 public static int[] label = new int[20];
 public static int label_num = 0;
 public static int ltop = 0;
-public static String[] st1 = new String[100];
-public static char[] temp_count = new char[2];
-public static int[] plist = new int[100];
-public static int[] flist = new int[100];
+public static String[] st1 = new String[1000];
+public static char[] temp_count = new char[3];
+public static int[] plist = new int[1000];
+public static int[] flist = new int[1000];
 public static int errc=0;
 public static int lnum1 = 0;
 public static String temp = "t";
@@ -502,13 +506,12 @@ void codegen_assign()
 
 class Sym{
     public int sno;
-    public int[] type = new int[100];
-    public int[] paratype = new int[100];
+    public int[] type = new int[1000];
+    public int[] paratype = new int[1000];
     public int tn;
     public int pn;
     public int index;
-    public int scope;
-    public String token;
+    public int scope; public String token;
     public float fvalue;
 
 
@@ -524,7 +527,7 @@ class Sym{
         }
 }
 
-public static Sym[] st = new Sym[100];
+public static Sym[] st = new Sym[1000];
 public static int n=0;
 public static int tnp;
 
@@ -800,20 +803,6 @@ public static void display()
  *    return yylineno;
  *}
  */
-public static void push()
-{
-	stack[top]=i;
-	i++;
-	top++;
-	return;
-}
-public static void pop()
-{
-	top--;
-	end[stack[top]]=1;
-	stack[top]=0;
-	return;
-}
 
 private int yylex(){
     int yyl_return = -1;
@@ -830,7 +819,7 @@ private int yylex(){
 }
 
 public void yyerror(String error) {
-    System.err.println("Error: "+ error + " at line " + lexer.getLine());
+    System.err.println("Error_1: "+ error + " at line " + lexer.getLine());
     errc+=1;
 }
 
@@ -839,7 +828,7 @@ public Parser(Reader r){
 }
 
 public void init() {
-    for(int i = 0; i < 100; i++)
+    for(int i = 0; i < 1000; i++)
         st[i] = new Sym(0,0,0,-1,0,"",(float)0.0);
     temp_count[0] = '0';
     temp_count[0] = '0';
