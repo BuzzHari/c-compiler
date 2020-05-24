@@ -23,40 +23,49 @@ def parseVal(x):
         except ValueError:
             return 0
 
+
+x = 0
+y = 0
 def usage():
     print("Usage: python", argv[0], "\"input_file\"")
 
 def codegen(op, i):
     if (parseVal(i.arg1)):
-        print("MOV R1, ", i.arg1, sep="")
+        print("MOV R1, #", i.arg1, sep="")
     else:
-        print("LW R1, ", i.arg1, sep="")
+        print("LDR R7, =", i.arg1, sep="")
+        print("LDR R1, [R7]")
+        x = 1
 
     if (parseVal(i.arg2)):
-        print("MOV R2, ", i.arg2, sep="")
+        print("MOV R2, #", i.arg2, sep="")
     else:
-        print("LW R2, ", i.arg2, sep="")
+        print("LDR R7, =", i.arg2, sep="")
+        print("LDR R2, [R7]")
+        y = 1
 
     if (op == "SUB"):
-        print(op, "R0, R2, R1")
+        print(op, "R0, R1, R2")
     else:
         print(op, "R0, R1, R2")
 
-    print("SW R0,", i.dest)
-    # print("MOV ", i.arg1, ", R0", sep="")
-    # print(op, " ", i.arg2, ", R0", sep="")
-    # print("MOV R0, ", i.dest, sep="")
+    print("LDR R7, =", i.dest, sep="")
+    print("STR R0, [R7]")
 
 def genif(i):
     if (parseVal(i.arg1)):
-        print("MOV R1, ", i.arg1, sep="")
+        print("MOV R1, #", i.arg1, sep="")
     else:
-        print("LW R1, ", i.arg1, sep="")
+        # print("LW R1, ", i.arg1, sep="")
+        print("LDR R7, =", i.arg1, sep="")
+        print("LDR R1, [R7]")
 
     if (parseVal(i.arg2)):
-        print("MOV R2, ", i.arg2, sep="")
+        print("MOV R2, #", i.arg2, sep="")
     else:
-        print("LW R2, ", i.arg2, sep="")
+        # print("LW R2, ", i.arg2, sep="")
+        print("LDR R7, =", i.arg2, sep="")
+        print("LDR R2, [R7]")
 
     print("CMP R1, R2")
 
@@ -64,17 +73,21 @@ def genif(i):
 def genjmp(cond, i):
     cond = cond.upper()
     if cond == "":
-        print("JMP", i.dest)
+        print("B .", i.dest, sep="")
         return
-    print(cond, i.dest)
+    print(cond, " .", i.dest, sep="")
 
 def assign(i):
     if (parseVal(i.arg1)):
-        print("MOV", "R0,", i.arg1)
-        print("SW", "R0,", i.dest)
+        print("MOV R0, #", i.arg1, sep="")
+        print("LDR R7, =", i.dest, sep="")
+        print("STR R0, [R7]")
     else:
-        print("LW", "R0,", i.arg1)
-        print("SW", "R0,", i.dest)
+        print("LDR R7, =", i.arg1)
+        print("LDR R0, [R7]")
+
+        print("LDR R7, =", i.dest, sep="")
+        print("STR R0, [R7]")
 
 
 def main(argc, argv):
@@ -121,6 +134,15 @@ def main(argc, argv):
     # for i in table:
     #     i.disp()
     cond = ""
+    varrs = list()
+    for i in table:
+        varrs.append(i.dest)
+
+    uvars = list()
+    for i in varrs:
+        if not i in uvars and not re.match("L\d+.*", i): #and not re.match("t\d+.*", i)
+            uvars.append(i)
+
     for i in table:
         print()
         if (i.op == "+"):
@@ -138,24 +160,30 @@ def main(argc, argv):
             cond = ""
         elif (i.op == "=="):
             genif(i)
-            cond="jne"
+            cond="bne"
         elif (i.op == "!="):
             genif(i)
-            cond="je"
+            cond="beq"
         elif (i.op == ">"):
             genif(i)
-            cond="jle"
+            cond="ble"
         elif (i.op == "<"):
             genif(i)
-            cond="jge"
+            cond="bge"
         elif (i.op == ">="):
             genif(i)
-            cond="jl"
+            cond="blt"
         elif (i.op == "<="):
             genif(i)
-            cond="jg"
+            cond="bgt"
         elif (i.op == ""):
             print(".", i.dest, ":", sep="")
+
+    print("SWI 0x11")
+
+    print()
+    for i in uvars:
+        print(i, ": .WORD 0", sep="")
 
 if __name__ == "__main__":
     # print("Begin")
